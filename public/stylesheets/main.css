@@ -1,0 +1,19 @@
+
+#bg-nav{
+  background-color:#5f6775;
+}
+
+#fist-body{
+  background-image: url("aleks-dorohovich-26-unsplash.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 550px;
+  width:100%;
+  position: absolute;
+}
+
+.jumbotron{
+  opacity: 0.8;
+  width:65%;
+  margin: 3% auto;
+}
