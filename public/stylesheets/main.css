@@ -9,11 +9,56 @@
   background-size: cover;
   height: 550px;
   width:100%;
-  position: absolute;
 }
 
 .jumbotron{
   opacity: 0.8;
   width:65%;
-  margin: 3% auto;
+  margin-top: 3%;
+  margin-left: 20%;
+  position: absolute;
+}
+
+#second-body{
+  background-image: url("brushed.png");
+  height: 600px;
+}
+
+#second-body h3{
+  text-align: center;
+  padding-top: 50px;
+  margin-bottom: 20px;
+}
+
+#third-body{
+background-image: url("bgbody.png");
+height: 600px;
+}
+
+#footer{
+  background-color: #5f6775;
+  height: 150px;
+}
+
+img{
+  height: 100px;
+  width: 150px;
+  -webkit-box-shadow: 3px 3px 5px 6px #ccc;  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+  -moz-box-shadow:    3px 3px 5px 6px #ccc;  /* Firefox 3.5 - 3.6 */
+  box-shadow:         3px 3px 5px 6px #ccc;
+}
+
+#widthTable{
+  width: 50%;
+  margin-top: 5%;
+  margin-left: 25%;
+  position: absolute;
+}
+
+.borderTable{
+  border-bottom: 1px solid #5f6775;
+}
+
+.table td{
+  border: 1px solid black;
 }
