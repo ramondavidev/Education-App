@@ -2,13 +2,18 @@
 
 <a href="/postagem">Fazer uma Postagem</a>
 
-
-<% posts.forEach(function(post) { %>
-    
-    <p><%= post.title %></p>
-    <p><%= post.image %></p>
-    <p><%= post.content %></p>
-<% }); %>
-
-
+<div class="posts">
+<div class="row">
+    <% posts.forEach(function(post) { %>
+        <div class="col-lg-6">
+            <a href="/revise/<%= post._id %>"><h3><%= post.title %></h3></a>
+            
+            <img class="img-thumbnail"  src="<%= post.image %>" alt="">
+            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aliquam enim dolores exercitationem solut.</p>
+            
+        </div>
+            
+    <% }); %>
+</div>
+</div>
 <% include partials/footer %>

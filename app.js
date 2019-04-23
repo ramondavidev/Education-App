@@ -97,4 +97,14 @@ app.post("/revise", function(req, res){
     })
 });
 
+app.get("/revise/:id", function(req, res){
+    Post.findById(req.params.id, function(err, foundPost){
+        if(err || !foundPost){
+            console.log(err);
+        } else {
+            res.render("show", {post: foundPost});
+        }
+    });
+});
+
 app.listen(3000, () => console.log(`Example app listening on port ${3000}!`));
