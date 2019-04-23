@@ -62,3 +62,11 @@ img{
 .table td{
   border: 1px solid black;
 }
+
+#form{
+  width: 60%;
+  margin: 50px auto;
+  border: 1px solid rgba(0, 0, 0, .4);
+  padding: 15px;
+  border-radius: 25px;
+}

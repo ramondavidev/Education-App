@@ -1,0 +1,20 @@
+<% include partials/header %>
+<form action="/revise" method="POST">
+    <div id="form">
+        <div class="form-group">
+            <label for="title">Título</label>
+            <input type="text" name="title" class="form-control" id="title" placeholder="Título">
+        </div>
+        <div class="form-group">
+                <label for="img">Imagem</label>
+                <input type="text" name="img" class="form-control" id="img" placeholder="url da imagem">
+            </div>
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">Example textarea</label>
+            <textarea name="content" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+
+<% include partials/footer %>

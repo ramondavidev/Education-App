@@ -1,5 +1,14 @@
 <% include partials/header %>
 
+<a href="/postagem">Fazer uma Postagem</a>
+
+
+<% posts.forEach(function(post) { %>
+    
+    <p><%= post.title %></p>
+    <p><%= post.image %></p>
+    <p><%= post.content %></p>
+<% }); %>
 
 
 <% include partials/footer %>
