@@ -1,7 +1,14 @@
 <% include partials/header %>
 
-<h1>Show Page!</h1>
 
-<%= post.title %>
-
+<div id="post">
+    
+    <img class="img-thumbnail center" src="<%= post.image %>" alt="">
+    <h2><%= post.title %></h2>
+    <p><%= post.content %></p>
+    <a href="/revise/<%= post._id %>/edit">Edite</a>
+    <form action="/revise/<%= post._id %>?_method=DELETE" method="POST">
+        <button>DELETE</button>
+    </form>
+</div>
 <% include partials/footer %>

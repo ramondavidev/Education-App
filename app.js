@@ -2,12 +2,14 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const methodOverride = require("method-override");
 
 mongoose.connect('mongodb://localhost:27017/masteredu', {useNewUrlParser: true});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
+app.use(methodOverride("_method"));
 
 
 //Schemas for DB
@@ -67,8 +69,8 @@ app.get("/info", (req, res) =>
     res.render("info")
 );
 
-app.get("/revise", function(req, res){
-    Post.find({}, function(err, allPost){
+app.get("/revise", (req, res) =>{
+    Post.find({}, (err, allPost) =>{
         if(err){
             console.log(err);
         } else {
@@ -81,13 +83,13 @@ app.get("/postagem", (req, res) =>
     res.render("postagem")
 );
 
-app.post("/revise", function(req, res){
+app.post("/revise", (req, res) =>{
     var newPost = new Post({
         title: req.body.title,
         image:  req.body.img,
         content: req.body.content
     });
-    Post.create(newPost, function(err, newlyCreated){
+    Post.create(newPost, (err, newlyCreated)=>{
         if(err){
             console.log(err);
         } else {
@@ -97,12 +99,38 @@ app.post("/revise", function(req, res){
     })
 });
 
-app.get("/revise/:id", function(req, res){
-    Post.findById(req.params.id, function(err, foundPost){
+app.get("/revise/:id", (req, res) =>{
+    Post.findById(req.params.id, (err, foundPost) =>{
         if(err || !foundPost){
             console.log(err);
         } else {
             res.render("show", {post: foundPost});
+        }
+    });
+});
+
+app.get("/revise/:id/edit", (req, res) =>{
+    Post.findById(req.params.id, (err, foundPost) =>{
+        res.render("edit", {post: foundPost});
+    });
+});
+
+app.put("/revise/:id", (req, res) =>{
+    Post.findByIdAndUpdate(req.params.id, req.body.post, (err, updatedPost) =>{
+        if(err){
+            console.log(err);
+        } else {
+            res.redirect("/revise/" + req.params.id);
+        }
+    });
+});
+
+app.delete("/revise/:id",(req, res) =>{
+    Post.findByIdAndRemove(req.params.id, (err, postRemoved) =>{
+        if(err){
+            console.log(err);
+        } else {
+            res.redirect("/revise");
         }
     });
 });
