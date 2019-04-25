@@ -18,14 +18,14 @@ var postSchema = new mongoose.Schema({
     image: String,
     content: String,
     createdAt: Date,
-    author:{
+    /*author:{
         id:{
             type: mongoose.Schema.Types.ObjectId,
             ref:"User"
         },
         username: String
-    },
-    comment: [
+    },*/
+    comments: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Comment"
@@ -36,14 +36,14 @@ Post = mongoose.model("Post", postSchema);
 
 var commentSchema = new mongoose.Schema({
     content:String,
-    createdAt: {type: Date , default: Date.now},
+    createdAt: {type: Date , default: Date.now}/*,
     author:{
         id:{
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         },
         username: String
-    }
+    }*/
 });
 Comment = mongoose.model("Comment", commentSchema);
 
@@ -99,12 +99,15 @@ app.post("/revise", (req, res) =>{
     })
 });
 
-app.get("/revise/:id", (req, res) =>{
-    Post.findById(req.params.id, (err, foundPost) =>{
-        if(err || !foundPost){
+app.get("/revise/:id", function(req, res){
+    //faz com que não retorne o ids do comments, e sim o conteudo.
+    Post.findById(req.params.id, function(err, foundCampground){
+        if(err || !foundCampground){
             console.log(err);
+            console.log("deu errado aqui de novo");
+            //return res.redirect('/campgrounds');
         } else {
-            res.render("show", {post: foundPost});
+            res.render("show", {post: foundCampground});
         }
     });
 });
@@ -131,6 +134,37 @@ app.delete("/revise/:id",(req, res) =>{
             console.log(err);
         } else {
             res.redirect("/revise");
+        }
+    });
+});
+
+app.get("/revise/:id/comments/new", (req, res) => {
+    Post.findById(req.params.id, (err, foundPost) => {
+        if(err){
+            console.log(err);
+        } else {
+            res.render("commentNew", {post: foundPost});
+        }
+    });
+});
+
+app.post("/revise/:id/comments", (req, res) => {
+    Post.findById(req.params.id, (err, post) => {
+        if(err){
+            console.log(err);
+        } else {
+            Comment.create(req.body.comment, (err, commentCreated) => {
+                if(err){
+                    console.log(err);
+                } else {
+                    //comment.author.id = req.user._id;
+                    //comment.author.username = req.user.username;
+                    //comment.save();
+                    post.comments.push(commentCreated);
+                    post.save();
+                    res.redirect("/revise/" + post._id);
+                }
+            });
         }
     });
 });

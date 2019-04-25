@@ -10,5 +10,14 @@
     <form action="/revise/<%= post._id %>?_method=DELETE" method="POST">
         <button>DELETE</button>
     </form>
+    <h2>Comments</h2>
+    
+    <% post.comments.forEach(function(comment){ %>
+        <p>
+            <strong><%= post.author %></strong> - <%= post.content %>
+        </p>
+    <% }) %>
+
+    
 </div>
 <% include partials/footer %>
