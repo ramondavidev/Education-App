@@ -1,22 +1,33 @@
 <% include partials/header %>
 
-
-<div id="post">
-    
+<div id="show">
+    <h1>Show Page!</h1>
     <img class="img-thumbnail center" src="<%= post.image %>" alt="">
     <h2><%= post.title %></h2>
+    <h5><em>Criado por <a href="/user/<%= post.author.id %>"><%= post.author.username %></a></em></h5>
     <p><%= post.content %></p>
-    <a href="/revise/<%= post._id %>/edit">Edite</a>
-    <form action="/revise/<%= post._id %>?_method=DELETE" method="POST">
-        <button>DELETE</button>
-    </form>
-    <h2>Comments</h2>
-    
+    <% if(currentUser && post.author.id.equals(currentUser._id) && currentUser.isAdmin){ %>
+        <a class="btn btn-warning" href="/revise/<%= post._id %>/edit">Editar</a>
+        <form action="/revise/<%= post._id %>?_method=DELETE" method="POST">
+            <button class="btn btn-danger">Deletar</button>
+        </form>
+    <%}%>
+    <h2 class="mb-3">Comentários</h2>
+    <a class="btn btn-primary mb-4" href="/revise/<%= post._id %>/comments/new">Adicionar Comentário</a>
     <% post.comments.forEach(function(comment){ %>
-        <p>
-            <strong><%= post.author %></strong> - <%= post.content %>
+        <br>
+        <p style="display: inline;">
+            <strong><%=comment.author.username%></strong> - <%= comment.content %>
+            <% if(currentUser && comment.author.id.equals(currentUser._id)){ %>
+                <a class="btn btn-sm btn-warning buttons" href="/revise/<%=post._id %>/comments/<%=comment._id %>/edit"><i class="far fa-edit"></i></a>
+            <%}%>
+            <% if(currentUser && comment.author.id.equals(currentUser._id) || (currentUser && currentUser.isAdmin)){ %>
+            <form style="display: inline;"  id="delete-form" action="/revise/<%= post._id %>/comments/<%=comment._id %>?_method=DELETE" method="POST">
+                <button class="btn btn-sm btn-danger buttons"><i class="far fa-trash-alt"></i></button>
+            </form>
+            <%}%>
         </p>
-    <% }) %>
+    <% }); %>
 
     
 </div>

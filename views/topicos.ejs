@@ -1,6 +1,9 @@
 <% include partials/header %>
 
-<a href="/postagem">Fazer uma Postagem</a>
+<% if(currentUser && currentUser.isAdmin){ %>
+    <a class="btn btn-primary" href="/postagem">Fazer uma Postagem</a>
+<%}%>
+
 
 <div class="posts">
 <div class="row">

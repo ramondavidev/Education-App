@@ -38,6 +38,8 @@ height: 600px;
 #footer{
   background-color: #5f6775;
   height: 150px;
+  text-align: center;
+  color:white;
 }
 
 .photo{
@@ -76,17 +78,8 @@ height: 600px;
   margin: 100px auto;
 }
 
-#post{
-  width: 60%;
-  margin: 100px auto !important;
+#show{
+  width:60%;
+  margin: 0 auto;
 }
 
-#post h2{
-  text-align: center;
-}
-
-.center {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
