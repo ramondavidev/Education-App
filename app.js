@@ -2,9 +2,11 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const methodOverride = require("method-override");
+
 
 
 const Post = require("./models/post"),
@@ -14,12 +16,18 @@ middleware = require("./middleware");
 
 mongoose.connect('mongodb://localhost:27017/masteredu', {useNewUrlParser: true});
 
+//password reset
+//Go to https://myaccount.google.com/lesssecureapps and turn on less secure app access.
+const async = require("async");
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
+app.use(flash());
 
 app.use(require("express-session")({
     secret: "type anything here",
@@ -34,6 +42,8 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use(function(req, res, next){
     //whatever we put in res.locals is going to be available in all the templetes, so it takes req.user and pass through the templete as currentUser
+    res.locals.error = req.flash("error");
+    res.locals.success = req.flash("success");
     res.locals.currentUser = req.user;
     next(); 
 });
@@ -52,14 +62,34 @@ app.get("/info", (req, res) =>
     res.render("info")
 );
 
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
+
 app.get("/revise", middleware.isLoggedIn, function(req, res){
-    Post.find({}, function(err, allPost){
-        if(err){
-            console.log(err);
-        } else {
-            res.render("topicos", {posts: allPost});
-        }
-    });
+    var noMatch;
+    if(req.query.search){
+        const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+        Post.find({title: regex}, function(err, allPost){
+            if(err){
+                console.log(err);
+            } else {
+                if(allPost.length < 1){
+                    noMatch = "Nenhum tópico foi encontrado, pesquise novamente.";
+                }
+                res.render("topicos", {posts: allPost, noMatch: noMatch});
+            }
+        });
+    } else {
+        Post.find({}, function(err, allPost){
+            if(err){
+                console.log(err);
+            } else {
+                res.render("topicos", {posts: allPost, noMatch: noMatch});
+            }
+        });
+    }
+    
 });
 
 app.get("/postagem", middleware.isAdmin, function(req, res){
@@ -199,9 +229,11 @@ app.post("/registro", (req, res) => {
     });
     User.register(newUser, req.body.password, (err, user) => {
         if(err){
-            console.log(err);
+            req.flash("error", err.message);
+            return res.redirect("/register");
         } else {
             passport.authenticate("local")(req, res, () =>{
+                req.flash("success", "Seja bem vindo ao MasterEdu " + user.username);
                 res.redirect("/inicio");
             });
         }
@@ -238,5 +270,122 @@ app.get("/user/:id", function(req, res){
         });
     });
 });
+
+app.get('/forgot', function(req, res){
+    res.render("forgot");
+});
+
+app.post('/forgot', function(req, res, next) {
+    async.waterfall([
+      function(done) {
+        crypto.randomBytes(20, function(err, buf) {
+          var token = buf.toString('hex');
+          done(err, token);
+        });
+      },
+      function(token, done) {
+        User.findOne({ email: req.body.email }, function(err, user) {
+          if (!user) {
+            //req.flash('error', 'No account with that email address exists.');
+            return res.redirect('/forgot');
+          }
+  
+          user.resetPasswordToken = token;
+          user.resetPasswordExpires = Date.now() + 3600000; // 1 hour to expire request
+  
+          user.save(function(err) {
+            done(err, token, user);
+          });
+        });
+      },
+      function(token, user, done) {
+        var smtpTransport = nodemailer.createTransport({
+          service: 'Gmail', 
+          auth: {
+            user: 'ramondhr742@gmail.com',
+            pass: 'Frenesi167349'
+          }
+        });
+        var mailOptions = {
+          to: user.email,
+          from: 'ramondhr742@gmail.com',
+          subject: 'EduMaster Solicitação Para Mudar Senha',
+          text: 'Você recebeu esse email porque você (ou alguem) solicitou um pedido para resetar a senha da sua conta.\n\n' +
+            'Por favor click no link seguinte para prosseguir, ou cole o link no seu browser para completar o processo:\n\n' +
+            'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+            'Se você não solicitou isso, por favor ignore esse email e o seu password vai permanecer o mesmo.\n'
+        };
+        smtpTransport.sendMail(mailOptions, function(err) {
+          console.log('mail sent');
+          //req.flash('success', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
+          done(err, 'done');
+        });
+      }
+    ], function(err) {
+      if (err) return next(err);
+      res.redirect('/forgot');
+    });
+  });
+
+  app.get('/reset/:token', function(req, res) {
+    User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
+      if (!user) {
+        //req.flash('error', 'Password reset token is invalid or has expired.');
+        return res.redirect('/forgot');
+      }
+      res.render('reset', {token: req.params.token});
+    });
+  });
+  
+  app.post('/reset/:token', function(req, res) {
+    async.waterfall([
+      function(done) {
+        User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
+          if (!user) {
+            //req.flash('error', 'Password reset token is invalid or has expired.');
+            return res.redirect('back');
+          }
+          if(req.body.password === req.body.confirm) {
+            user.setPassword(req.body.password, function(err) {
+              user.resetPasswordToken = undefined;
+              user.resetPasswordExpires = undefined;
+  
+              user.save(function(err) {
+                req.logIn(user, function(err) {
+                  done(err, user);
+                });
+              });
+            })
+          } else {
+              //req.flash("error", "Passwords do not match.");
+              return res.redirect('back');
+          }
+        });
+      },
+      function(user, done) {
+        var smtpTransport = nodemailer.createTransport({
+          service: 'Gmail', 
+          auth: {
+            user: 'ramondhr742@gmail.com',
+            pass: 'Frenesi167349'
+          }
+        });
+        var mailOptions = {
+          to: user.email,
+          from: 'ramondhr742@gmail.com',
+          subject: 'Sua Senha Foi Mudada',
+          text: 'Oi' + user.username + ',\n\n' +
+            'Esse email é uma confirmação informando que a senha da sua conta ' + user.email + ' foi mudada.\n'
+        };
+        smtpTransport.sendMail(mailOptions, function(err) {
+          //req.flash('success', 'Success! Your password has been changed.');
+          done(err);
+        });
+      }
+    ], function(err) {
+      res.redirect('/inicio');
+    });
+  });
+
 
 app.listen(3000, () => console.log(`Example app listening on port ${3000}!`));
