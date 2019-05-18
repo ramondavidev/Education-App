@@ -1,11 +1,44 @@
 <% include partials/header %>
 
+<%moment.locale("pt-br"); %> 
+
 <div id="show">
     <h1>Show Page!</h1>
     <img class="img-thumbnail center" src="<%= post.image %>" alt="">
     <h2><%= post.title %></h2>
-    <h5><em>Criado por <a href="/user/<%= post.author.id %>"><%= post.author.username %></a></em></h5>
+    <h5>
+        <p>
+            <em>Criado por: <a href="/user/<%=post.author.id %>"><%= post.author.username %></a>, <%= moment(post.createdAt).fromNow() %></em>
+        </p>
+    </h5>
     <p><%= post.content %></p>
+
+    <button type="button" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#campgroundLikes">
+        <span>Total likes: <i class="fas fa-thumbs-up"></i> <%= post.likes.length %></span>
+    </button>
+
+
+    <form action="/revise/<%= post._id %>/like" class="d-inline ml-3" method="POST">
+        <div class="btn-group">
+            <% if (currentUser && post.likes.some(function (like) {
+                return like.equals(currentUser._id)
+            })) { %>
+            <button class="btn btn-sm btn-primary">
+                <i class="fas fa-thumbs-up"></i> Liked (<%= post.likes.length %>)
+            </button>
+            <% } else { %>
+            <button class="btn btn-sm btn-secondary">
+                <i class="fas fa-thumbs-up"></i> Like (<%= post.likes.length %>)
+            </button>
+            <% } %>
+            <button type="button" class="btn btn-sm btn-default" data-toggle="modal"
+                    data-target="#campgroundLikes">Ver mais detalhes
+            </button>
+        </div>
+    </form>
+
+
+
     <% if(currentUser && post.author.id.equals(currentUser._id) && currentUser.isAdmin){ %>
         <a class="btn btn-warning" href="/revise/<%= post._id %>/edit">Editar</a>
         <form action="/revise/<%= post._id %>?_method=DELETE" method="POST">
@@ -18,6 +51,7 @@
         <br>
         <p style="display: inline;">
             <strong><%=comment.author.username%></strong> - <%= comment.content %>
+            <span class="float-right"><%= moment(comment.createdAt).fromNow() %></span>
             <% if(currentUser && comment.author.id.equals(currentUser._id)){ %>
                 <a class="btn btn-sm btn-warning buttons" href="/revise/<%=post._id %>/comments/<%=comment._id %>/edit"><i class="far fa-edit"></i></a>
             <%}%>
@@ -28,6 +62,45 @@
             <%}%>
         </p>
     <% }); %>
+
+
+<!-- Post Likes Modal -->
+<div id="campgroundLikes" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Post likes: <%= post.likes.length %></h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Liked by:</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% post.likes.forEach(function(like) { %>
+                        <tr>
+                            <td><span class="badge"><i class="fas fa-user"></i></span> <%= like.username %></td>
+                        </tr>
+                    <% }); %>
+                    <% if (post.likes.length === 0) { %>
+                        <tr>
+                            <td><em>No likes yet.</em></td>
+                        </tr>
+                    <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
     
 </div>

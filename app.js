@@ -29,6 +29,8 @@ app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
 app.use(flash());
 
+app.locals.moment = require('moment');
+
 app.use(require("express-session")({
     secret: "type anything here",
     resave: false,
@@ -60,6 +62,14 @@ app.get("/inicio", (req, res) =>
 
 app.get("/info", (req, res) =>
     res.render("info")
+);
+
+app.get("/materiais", (req, res) =>
+    res.render("downloadPage")
+);
+
+app.get("/teste", (req, res)=>
+    res.render("teste")
 );
 
 function escapeRegex(text) {
@@ -118,7 +128,7 @@ app.post("/revise",middleware.isAdmin, function(req, res){
 
 app.get("/revise/:id", function(req, res){
     //faz com que não retorne o ids do comments, e sim o conteudo.
-    Post.findById(req.params.id).populate("comments").exec(function(err, foundPost){
+    Post.findById(req.params.id).populate("comments likes").exec(function(err, foundPost){
         if(err){
             console.log(err);
         } else {
@@ -145,6 +155,30 @@ app.put("/revise/:id", middleware.checkCampgroundOwnership, (req, res) =>{
     });
 });
 
+/*
+router.put("/:id", middleware.checkCampgroundOwnership, function (req, res) {
+    // find and update the correct campground
+    Campground.findById(req.params.id, function (err, campground) {
+        if (err) {
+            console.log(err);
+            res.redirect("/campgrounds");
+        } else {
+            campground.name = req.body.campground.name;
+            campground.description = req.body.campground.description;
+            campground.image = req.body.campground.image;
+            campground.save(function (err) {
+                if (err) {
+                    console.log(err);
+                    res.redirect("/campgrounds");
+                } else {
+                    res.redirect("/campgrounds/" + campground._id);
+                }
+            });
+        }
+    });
+});
+*/
+
 app.delete("/revise/:id", middleware.checkCampgroundOwnership, (req, res) =>{
     Post.findByIdAndRemove(req.params.id, (err, postRemoved) =>{
         if(err){
@@ -152,6 +186,37 @@ app.delete("/revise/:id", middleware.checkCampgroundOwnership, (req, res) =>{
         } else {
             res.redirect("/revise");
         }
+    });
+});
+
+// Post Like Route
+app.post("/revise/:id/like", middleware.isLoggedIn, function (req, res) {
+    Post.findById(req.params.id, function (err, foundPost) {
+        if (err) {
+            console.log(err);
+            return res.redirect("/inicio");
+        }
+
+        // check if req.user._id exists in foundPost.likes
+        var foundUserLike = foundPost.likes.some(function (like) {
+            return like.equals(req.user._id);
+        });
+
+        if (foundUserLike) {
+            // user already liked, removing like
+            foundPost.likes.pull(req.user._id);
+        } else {
+            // adding the new user like
+            foundPost.likes.push(req.user);
+        }
+
+        foundPost.save(function (err) {
+            if (err) {
+                console.log(err);
+                return res.redirect("/inicio");
+            }
+            return res.redirect("/revise/" + foundPost._id);
+        });
     });
 });
 
@@ -230,7 +295,7 @@ app.post("/registro", (req, res) => {
     User.register(newUser, req.body.password, (err, user) => {
         if(err){
             req.flash("error", err.message);
-            return res.redirect("/register");
+            return res.redirect("/registro");
         } else {
             passport.authenticate("local")(req, res, () =>{
                 req.flash("success", "Seja bem vindo ao MasterEdu " + user.username);
@@ -254,7 +319,8 @@ app.post("/login", passport.authenticate("local",
 
 app.get("/logout", (req, res)=>{
     req.logout();
-    res.redirect("/revise");
+    req.flash("success", "Deslogado com sucesso! ");
+    res.redirect("/login");
 });
 
 app.get("/user/:id", function(req, res){

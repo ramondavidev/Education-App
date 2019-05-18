@@ -4,7 +4,8 @@
   "description": "Education App",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "author": "Ramon Davi",
   "license": "ISC",
@@ -16,6 +17,7 @@
     "express": "^4.16.4",
     "express-session": "^1.16.1",
     "method-override": "^3.0.0",
+    "moment": "^2.24.0",
     "mongoose": "^5.5.3",
     "nodemailer": "^6.1.1",
     "passport": "^0.4.0",
