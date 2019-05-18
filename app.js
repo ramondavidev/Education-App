@@ -14,7 +14,14 @@ Comment = require("./models/comment"),
 User = require("./models/user");
 middleware = require("./middleware");
 
-mongoose.connect('mongodb://localhost:27017/masteredu', {useNewUrlParser: true});
+mongoose.connect('mongodb+srv://ramon742:frenesi167349@ramon-ast1w.mongodb.net/test?retryWrites=true', {
+    useNewUrlParser: true,
+    useCreateIndex: true
+}).then(() => {
+    console.log('Connected to DB!');
+}).catch(err => {
+    console.log('Error to connect to DB', err.message);
+});
 
 //password reset
 //Go to https://myaccount.google.com/lesssecureapps and turn on less secure app access.
