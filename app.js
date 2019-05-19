@@ -14,7 +14,7 @@ Comment = require("./models/comment"),
 User = require("./models/user");
 middleware = require("./middleware");
 
-mongoose.connect('mongodb+srv://ramon742:frenesi167349@ramon-ast1w.mongodb.net/test?retryWrites=true', {
+mongoose.connect('mongodb+srv://ramon742:frenesi167349\@ramon-ast1w.mongodb.net/test?retryWrites=true', {
     useNewUrlParser: true,
     useCreateIndex: true
 }).then(() => {
