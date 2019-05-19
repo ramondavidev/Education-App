@@ -16,7 +16,7 @@ middlewareObj.checkCampgroundOwnership = function(req, res, next){
                 if(foundPost.author.id.equals(req.user._id) && req.user.isAdmin){  //compara object id foundCampground.author.id com string req.user._id
                     next();
                 } else {
-                    //req.flash("error", "You don't have permission to do that");
+                    req.flash("error", "Você não tem permissão para fazer isso!");
                     res.redirect("back");
                 }
             }
@@ -54,6 +54,7 @@ middlewareObj.isLoggedIn = function(req, res, next){
     if(req.isAuthenticated()){
         return next();
     } else {
+        req.flash("error", "Você precisar estar logado.");
         res.redirect("/login");
     }
 }
