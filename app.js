@@ -14,7 +14,8 @@ Comment = require("./models/comment"),
 User = require("./models/user");
 middleware = require("./middleware");
 
-mongoose.connect('mongodb+srv://ramon742:frenesi167349@ramon-ast1w.mongodb.net/test?retryWrites=true', {
+
+mongoose.connect(process.env.DATABASEURL, {
     useNewUrlParser: true,
     useCreateIndex: true
 }).then(() => {
@@ -460,8 +461,7 @@ app.post('/forgot', function(req, res, next) {
     });
   });
 
-
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-      console.log(`Our app is running on port ${ PORT }`);
-  });
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Our app is running on port ${ PORT }`);
+});

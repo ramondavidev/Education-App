@@ -1,5 +1,140 @@
-<% include partials/header %>
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<h3>Teste seus Conhecimentos</h3>
+    <link rel="stylesheet" href="/stylesheets/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>MasterEdu</title>
+
+    <style>
+            div#test{ border:#000 1px solid; padding:10px 40px 40px 40px; }
+    </style>
+        <script> //<script src="q_list.js"> se tiver um questions array nesse arquivo vai ser feito uma leitura.
+            var pos = 0, test, test_status, question, choice, choices, chA, chB, chC, correct = 0;
+            var questions = [
+                [ "What is 10 + 4?", "12", "14", "16", "B" ],
+                [ "What is 20 - 9?", "7", "13", "11", "C" ],
+                [ "What is 7 x 3?", "21", "24", "25", "A" ],
+                [ "What is 8 / 2?", "10", "2", "4", "C" ]
+            ];
+            function _(x){
+                return document.getElementById(x);
+            }
+            function renderQuestion(){
+                test = _("test");
+                if(pos >= questions.length){
+                    test.innerHTML = "<h2>You got "+correct+" of "+questions.length+" questions correct</h2>";
+                    _("test_status").innerHTML = "Test Completed";
+                    pos = 0;
+                    correct = 0;
+                    return false; //stops the renderQuestion function
+                }
+                _("test_status").innerHTML = "Question "+(pos+1)+" of "+questions.length;
+                question = questions[pos][0];
+                chA = questions[pos][1];
+                chB = questions[pos][2];
+                chC = questions[pos][3];
+                test.innerHTML = "<h3>"+question+"</h3>";
+                test.innerHTML += "<input type='radio' name='choices' value='A'> "+chA+"<br>";
+                test.innerHTML += "<input type='radio' name='choices' value='B'> "+chB+"<br>";
+                test.innerHTML += "<input type='radio' name='choices' value='C'> "+chC+"<br><br>";
+                test.innerHTML += "<button onclick='checkAnswer()'>Submit Answer</button>";
+            }
+            function checkAnswer(){
+                choices = document.getElementsByName("choices");
+                for(var i=0; i<choices.length; i++){
+                    if(choices[i].checked){
+                        choice = choices[i].value;
+                    }
+                }
+                if(choice == questions[pos][4]){
+                    correct++;
+                }
+                pos++;
+                renderQuestion();
+            }
+            window.addEventListener("load", renderQuestion, false);
+        </script>
+
+  </head>
+  <body>
+    
+    <nav id="bg-nav" class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/inicio"><i class="fas fa-graduation-cap"></i> Master Edu</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+        
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                <a class="nav-link" href="/inicio">Home</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="/info">Sobre Nós</a>
+                </li>
+                <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Estude
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="/revise">Revise</a>
+                    <a class="dropdown-item" href="/materiais">Baixar Material</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/teste">Teste Conhecimento</a>
+                </div>
+                </li>
+                <% if(currentUser){ %>
+                    <form class="form-inline" action="/revise" method="GET">
+                        <input class="form-control mr-sm-2" type="search" name="search" placeholder="Pesquise" aria-label="Search">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                <% } %>
+            </ul>
+            
+
+            <ul class="navbar-nav ml-auto">
+                <% if(!currentUser){ %>
+                    <li class="nav-item mr-2">
+                    <a class="nav-link" href="/registro">Registrar <i class="fas fa-user-plus"></i></a>
+                    </li>
+                    <li class="nav-item mr-2">
+                    <a class="nav-link" href="/login">Login <i class="fas fa-sign-in-alt"></i></a>
+                    </li>
+                <%} else {%>
+                    <li class="nav-item mr-2">
+                            <a class="nav-link" href="/#">Usuário <%= currentUser.username %></a>
+                        </li>
+                    <li class="nav-item mr-2">
+                        <a class="nav-link" href="/logout">Sair <i class="fas fa-sign-in-alt"></i></a>
+                    </li>
+                <%}%>
+            </ul>
+
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+            <% if(error && error.length > 0){ %>
+                <div class="alert alert-danger" role="alert">
+                    <%= error %>
+                </div>
+            <% } %>
+            <% if(success && success.length >0){ %>
+                <div class="alert alert-success" role="alert">
+                    <%= success %>
+                </div>
+            <% } %>
+        </div>
+
+        <h2 id="test_status"></h2>
+        <div id="test"></div>
 
 <% include partials/footer %>
