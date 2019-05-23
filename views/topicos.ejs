@@ -24,4 +24,51 @@
     <% }); %>
 </div>
 </div>
+
+
+<nav class="Page navigation example">
+    <% if (pages && pages > 0) { %>
+    <ul id="centered" class="pagination">
+        <% if (current == 1) { %>
+        <li class="disabled page-item"><a class="page-link">Primeiro</a></li>
+        <% } else { %>
+        <li class="page-item"><a class="page-link" href="/revise<%if(search){%>?search=<%=search%><%}%>">Primeiro</a></li>
+        <% } %>
+ 
+        <% if (current == 1) { %>
+        <li class="disabled page-item"><a class="page-link">«</a></li>
+        <% } else { %>
+        <li class="page-item"><a class="page-link" href="/revise?page=<%= Number(current) - 1 %><%if(search){%>&search=<%=search%><%}%>">«</a></li>
+        <% } %>
+ 
+        <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
+        <% if (i !== 1) { %>
+        <li class="disabled page-item"><a class="page-link">...</a></li>
+        <% } %>
+        <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %>
+        <% if (i == current) { %>
+        <li class="active page-item"><a class="page-link"><%= i %></a></li>
+        <% } else { %>
+        <li class="page-item"><a class="page-link" href="/revise?page=<%= i %><%if(search){%>&search=<%=search%><%}%>"><%= i %></a></li>
+        <% } %>
+        <% if (i == Number(current) + 4 && i < pages) { %>
+        <li class="disabled page-item"><a class="page-link">...</a></li>
+        <% } %>
+        <% } %>
+ 
+        <% if (current == pages) { %>
+        <li class="disabled page-item"><a class="page-link">»</a></li>
+        <% } else { %>
+        <li class="page-item"><a class="page-link" href="/revise?page=<%= Number(current) + 1 %><%if(search){%>&search=<%=search%><%}%>">»</a></li>
+        <% } %>
+ 
+        <% if (current == pages) { %>
+        <li class="disabled page-item"><a class="page-link">Último</a></li>
+        <% } else { %>
+        <li class="page-item"><a class="page-link" href="/revise?page=<%= pages %><%if(search){%>&search=<%=search%><%}%>">Último</a></li>
+        <% } %>
+    </ul>
+    <% } %>
+</nav>
+
 <% include partials/footer %>

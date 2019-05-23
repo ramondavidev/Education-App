@@ -15,7 +15,7 @@ User = require("./models/user");
 middleware = require("./middleware");
 
 
-mongoose.connect(process.env.DATABASEURL, {
+mongoose.connect(process.env.DATABASEURL || 'mongodb://localhost:27017/masteredu', {
     useNewUrlParser: true,
     useCreateIndex: true
 }).then(() => {
@@ -84,30 +84,51 @@ function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 };
 
-app.get("/revise", middleware.isLoggedIn, function(req, res){
-    var noMatch;
-    if(req.query.search){
+//INDEX - show all posts
+app.get("/revise",middleware.isLoggedIn ,function(req, res){
+    var perPage = 8;
+    var pageQuery = parseInt(req.query.page);
+    var pageNumber = pageQuery ? pageQuery : 1;
+    var noMatch = null;
+    if(req.query.search) {
         const regex = new RegExp(escapeRegex(req.query.search), 'gi');
-        Post.find({title: regex}, function(err, allPost){
-            if(err){
-                console.log(err);
-            } else {
-                if(allPost.length < 1){
-                    noMatch = "Nenhum tópico foi encontrado, pesquise novamente.";
+        Post.find({title: regex}).skip((perPage * pageNumber) - perPage).limit(perPage).exec(function (err, allPosts) {
+            Post.count({title: regex}).exec(function (err, count) {
+                if (err) {
+                    console.log(err);
+                    res.redirect("back");
+                } else {
+                    if(allPosts.length < 1) {
+                        noMatch = "Tópico não encontrado, por favor tente novamente.";
+                    }
+                    res.render("topicos", {
+                        posts: allPosts,
+                        current: pageNumber,
+                        pages: Math.ceil(count / perPage),
+                        noMatch: noMatch,
+                        search: req.query.search
+                    });
                 }
-                res.render("topicos", {posts: allPost, noMatch: noMatch});
-            }
+            });
         });
     } else {
-        Post.find({}, function(err, allPost){
-            if(err){
-                console.log(err);
-            } else {
-                res.render("topicos", {posts: allPost, noMatch: noMatch});
-            }
+        // get all posts from DB
+        Post.find({}).skip((perPage * pageNumber) - perPage).limit(perPage).exec(function (err, allPosts) {
+            Post.count().exec(function (err, count) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    res.render("topicos", {
+                        posts: allPosts,
+                        current: pageNumber,
+                        pages: Math.ceil(count / perPage),
+                        noMatch: noMatch,
+                        search: false
+                    });
+                }
+            });
         });
     }
-    
 });
 
 app.get("/postagem", middleware.isAdmin, function(req, res){

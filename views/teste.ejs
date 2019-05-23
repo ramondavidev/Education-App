@@ -17,10 +17,10 @@
         <script> //<script src="q_list.js"> se tiver um questions array nesse arquivo vai ser feito uma leitura.
             var pos = 0, test, test_status, question, choice, choices, chA, chB, chC, correct = 0;
             var questions = [
-                [ "What is 10 + 4?", "12", "14", "16", "B" ],
-                [ "What is 20 - 9?", "7", "13", "11", "C" ],
-                [ "What is 7 x 3?", "21", "24", "25", "A" ],
-                [ "What is 8 / 2?", "10", "2", "4", "C" ]
+                [ "“O esquema funcionava através da superfaturação de obras que faziam parte de um programa que tinha como objetivo acelerar o crescimento econômico no País”. Essa descrição corresponde a uma operação criminosa no Brasil. Trata-se da:", "Operação Lava Jato", "Operação Greenfield", "Operação Navalha", "C" ],
+                [ "Qual foi a revolução que alavancou a independência do Brasil e em 2017 completou o segundo centenário?", "Revolução Pernambucana", "Revolução Farroupilha", "Revolução Federalista", "A" ],
+                [ "Chernobyl e Césio-137 fazem parte dos maiores acidentes nucleares da história. Em que países aconteceram?", "Estados Unidos e Ucrânia", "Ucrânia e Brasil", "Japão e Brasil", "B" ],
+                [ "Qual a funcionalidade da celula branca?", "são células sanguíneas que carregam hemoglobina. Eles são responsáveis pelo transporte do oxigênio dos pulmões para os tecidos e pela retirada do gás carbônico para ser eliminado pelos pulmões.", "são fragmentos de grandes células que compõem o sistema de coagulação do sangue e age na prevenção de hemorragias. ", "são as células de defesa do organismo que destroem os agentes estranhos, por exemplo, as bactérias, os vírus e as substâncias tóxicas que atacam o nosso organismo e causam infecções ou outras doenças.", "C" ]
             ];
             function _(x){
                 return document.getElementById(x);
@@ -28,22 +28,22 @@
             function renderQuestion(){
                 test = _("test");
                 if(pos >= questions.length){
-                    test.innerHTML = "<h2>You got "+correct+" of "+questions.length+" questions correct</h2>";
-                    _("test_status").innerHTML = "Test Completed";
+                    test.innerHTML = "<h2>Você acertou "+correct+" de "+questions.length+" questões.</h2>";
+                    _("test_status").innerHTML = "Teste Concluído";
                     pos = 0;
                     correct = 0;
                     return false; //stops the renderQuestion function
                 }
-                _("test_status").innerHTML = "Question "+(pos+1)+" of "+questions.length;
+                _("test_status").innerHTML = "Questão "+(pos+1)+" de "+questions.length;
                 question = questions[pos][0];
                 chA = questions[pos][1];
                 chB = questions[pos][2];
                 chC = questions[pos][3];
-                test.innerHTML = "<h3>"+question+"</h3>";
+                test.innerHTML = "<h4>"+question+"</h4>";
                 test.innerHTML += "<input type='radio' name='choices' value='A'> "+chA+"<br>";
                 test.innerHTML += "<input type='radio' name='choices' value='B'> "+chB+"<br>";
                 test.innerHTML += "<input type='radio' name='choices' value='C'> "+chC+"<br><br>";
-                test.innerHTML += "<button onclick='checkAnswer()'>Submit Answer</button>";
+                test.innerHTML += "<button onclick='checkAnswer()'>Enviar Resposta</button>";
             }
             function checkAnswer(){
                 choices = document.getElementsByName("choices");
@@ -121,7 +121,7 @@
         </div>
     </nav>
 
-    <div class="container">
+    <div class="container my-5">
             <% if(error && error.length > 0){ %>
                 <div class="alert alert-danger" role="alert">
                     <%= error %>
@@ -132,9 +132,10 @@
                     <%= success %>
                 </div>
             <% } %>
-        </div>
+        
 
         <h2 id="test_status"></h2>
         <div id="test"></div>
+    </div>
 
 <% include partials/footer %>
