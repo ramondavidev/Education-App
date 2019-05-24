@@ -45,23 +45,7 @@
             <button class="btn btn-danger">Deletar</button>
         </form>
     <%}%>
-    <h2 class="mb-3">Comentários</h2>
-    <a class="btn btn-primary mb-4" href="/revise/<%= post._id %>/comments/new">Adicionar Comentário</a>
-    <% post.comments.forEach(function(comment){ %>
-        <br>
-        <p style="display: inline;">
-            <strong><%=comment.author.username%></strong> - <%= comment.content %>
-            <span class="float-right"><%= moment(comment.createdAt).fromNow() %></span>
-            <% if(currentUser && comment.author.id.equals(currentUser._id)){ %>
-                <a class="btn btn-sm btn-warning buttons" href="/revise/<%=post._id %>/comments/<%=comment._id %>/edit"><i class="far fa-edit"></i></a>
-            <%}%>
-            <% if(currentUser && comment.author.id.equals(currentUser._id) || (currentUser && currentUser.isAdmin)){ %>
-            <form style="display: inline;"  id="delete-form" action="/revise/<%= post._id %>/comments/<%=comment._id %>?_method=DELETE" method="POST">
-                <button class="btn btn-sm btn-danger buttons"><i class="far fa-trash-alt"></i></button>
-            </form>
-            <%}%>
-        </p>
-    <% }); %>
+
 
 
 <!-- Post Likes Modal -->
@@ -71,13 +55,13 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Post likes: <%= post.likes.length %></h4>
+                <h4 class="modal-title">Total de Curtidas: <%= post.likes.length %></h4>
             </div>
             <div class="modal-body">
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                        <th>Liked by:</th>
+                        <th>Curtido por:</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -88,19 +72,53 @@
                     <% }); %>
                     <% if (post.likes.length === 0) { %>
                         <tr>
-                            <td><em>No likes yet.</em></td>
+                            <td><em>Sem curtidas ainda.</em></td>
                         </tr>
                     <% } %>
                     </tbody>
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
             </div>
         </div>
     </div>
 </div>
 
+
+
+<div id="comments" class="ui comments rounded">
+        <h2><span class="badge badge-secondary mb-3">Comentários</span></h2>
+    <% post.comments.forEach(function(comment){ %>
+    <div id="comentario" class="comment rounded">
+        <a class="author"><%=comment.author.username%></a>
+        <div class="metadata">
+          <div class="date"><%= moment(comment.createdAt).fromNow() %></div>
+        </div>
+        <div class="text">
+          <p><%= comment.content %> </p>
+        </div>
+        <div class="actions">
+                <% if(currentUser && comment.author.id.equals(currentUser._id)){ %>
+                <a class="btn btn-sm btn-warning buttons" href="/revise/<%=post._id %>/comments/<%=comment._id %>/edit">Editar</a>
+                <%}%>
+                <% if(currentUser && comment.author.id.equals(currentUser._id) || (currentUser && currentUser.isAdmin)){ %>
+            <form style="display: inline;"  id="delete-form" action="/revise/<%= post._id %>/comments/<%=comment._id %>?_method=DELETE" method="POST">
+                <button class="btn btn-sm btn-danger buttons">Deletar</button>
+            </form>
+            <%}%>
+        </div>
+    </div>
+    <% }); %>
+    <form class="ui reply form" action="/revise/<%= post._id%>/comments" method="POST">
+      <div class="field">
+        <textarea type="text" name="comment[content]"></textarea>
+      </div>
+      <div >
+        <button class="ui primary submit labeled icon button"> <i class="icon edit"></i>Adicionar Comentário</button>
+      </div>
+    </form>
+  </div>
 
     
 </div>

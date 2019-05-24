@@ -97,3 +97,45 @@ background-image: url("bgbody.png");
   margin-left: 20%;
 }
 
+/*info*/
+
+.blurb h2 {
+  color: #1a3766;
+  font-weight: 100;
+  font-size: 2.5rem;
+}
+
+.blurb p {
+   color: #505d72;
+   font-weight: 100;
+   font-size: 1.125rem;
+   line-height: 2;
+}
+
+.content {
+   padding-top: 100px;  
+   padding-bottom: 100px;
+}
+
+
+
+#headingGroup h1 {
+  font-weight: 100;
+  font-size: 4rem;
+}
+
+#comments{
+  border: 1px rgba(0, 0, 0, .2) solid;
+  padding: 30px;
+  margin-bottom: 50px; 
+}
+
+.comment{
+  background-color: #5f6775;
+}
+
+#comentario{
+  background-color: rgba(0, 0, 0, .1);
+  padding: 10px;
+  margin-bottom: 20px;
+}

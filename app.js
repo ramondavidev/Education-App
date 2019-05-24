@@ -328,7 +328,7 @@ app.post("/registro", (req, res) => {
         } else {
             passport.authenticate("local")(req, res, () =>{
                 req.flash("success", "Seja bem vindo ao MasterEdu " + user.username);
-                res.redirect("/inicio");
+                res.redirect("/revise");
             });
         }
     });
@@ -340,7 +340,7 @@ app.get("/login", (req, res) => {
 
 app.post("/login", passport.authenticate("local",
     {
-        successRedirect: "/inicio",
+        successRedirect: "/revise",
         failureRedirect: "/login"
     }),(req, res) => {
 
