@@ -14,7 +14,7 @@
             <em>Criado por: <a href="/user/<%=post.author.id %>"><%= post.author.username %></a>, <%= moment(post.createdAt).fromNow() %></em>
         </p>
     </h5>
-    <p><%= post.content %></p>
+    <p class="text-justify"><%- post.content %></p>
 
     
 
