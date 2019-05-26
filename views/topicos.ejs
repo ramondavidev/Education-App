@@ -13,12 +13,10 @@
 <div class="posts">
 <div class="row">
     <% posts.forEach(function(post) { %>
-        <div class="col-lg-6">
-            <a href="/revise/<%= post._id %>"><h3><%= post.title %></h3></a>
-            
-            <img class="img-thumbnail"  src="<%= post.image %>" alt="">
-            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aliquam enim dolores exercitationem solut.</p>
-            
+        <div class="col-lg-6 mb-5">
+            <a href="/revise/<%= post._id %>"><h3 class="mb-3"><%= post.title %></h3></a>     
+            <img style="width:400px;" class="img-thumbnail"  src="<%= post.image %>" alt="">
+            <p class="mt-3"><%= post.content.substring(0, 100) %>...</p>
         </div>
             
     <% }); %>
@@ -26,7 +24,7 @@
 </div>
 
 
-<nav class="Page navigation example">
+<nav style="margin: 0 38%; width: 400px;" class="Page navigation example mb-5">
     <% if (pages && pages > 0) { %>
     <ul id="centered" class="pagination">
         <% if (current == 1) { %>

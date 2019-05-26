@@ -24,7 +24,7 @@
 
 }
 
-#second-body h3{
+#second-body h2{
   text-align: center;
   padding-top: 50px;
   margin-bottom: 20px;
@@ -138,4 +138,12 @@ background-image: url("bgbody.png");
   background-color: rgba(0, 0, 0, .1);
   padding: 10px;
   margin-bottom: 20px;
+}
+
+div p{
+  font-family: 'Roboto', sans-serif;
+}
+
+img + p{
+  font-size: 18px;
 }

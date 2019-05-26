@@ -2,8 +2,8 @@
 
 <div id="profile" class="mt-4">
     <h1>User <%= user.firstName + " " + user.lastName %></h1>
-    <img class="img-thumbnail" src="https://myspace.com/common/images/user.png" alt="">
-    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Facere, sequi iure est, vero iusto laboriosam earum quam similique error commodi quis, officiis deserunt voluptatum praesentium accusamus et molestiae dolorem? Commodi.</p>
+    <img class="img-thumbnail" src="<%= user.avatar%>" alt="">
+    <p><%= user.info%></p>
     <p> <strong>Email: </strong><a href="mailto:<%= user.email %>"><%= user.email%></a></p>
     <h3>Postagens de <%= user.firstName%></h3>
     <ul>
