@@ -15,7 +15,7 @@
     <% posts.forEach(function(post) { %>
         <div class="col-lg-6 mb-5">
             <a href="/revise/<%= post._id %>"><h3 class="mb-3"><%= post.title %></h3></a>     
-            <img style="width:400px;" class="img-thumbnail"  src="<%= post.image %>" alt="">
+            <img style="max-height: 300px;" class="img-thumbnail"  src="<%= post.image %>" alt="">
             <p class="mt-3"><%= post.content.substring(0, 100) %>...</p>
         </div>
             
